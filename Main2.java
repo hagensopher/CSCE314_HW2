@@ -12,8 +12,8 @@ public class Main2{
         Thread m1 = new Thread(new message1(count));
         m1.start();
 
-    //    Thread t2 = new Thread(new message1());
-    //    t2.start();
+       Thread t2 = new Thread(new message2(count));
+       t2.start();
 
     
     }
@@ -74,25 +74,29 @@ class message1 implements Runnable{ //only print when count is at a factor of 7
     }
 }
 
-class message2 implements Runnable{ //only print when count is a factor of 15
+class message2 implements Runnable{ //only print when count is at a factor of 7
+    //temp test value
     //int time = 0;
-    int count =0;
-    public message2(int count){
-        this.count = count;
+    private counter count;
+    public message2(counter counter){
+        this.count = counter;
     }
     public void run(){
         while(true){
-            try {
-                wait();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            if(count%15 == 0){ //a facotr of 7
-                System.out.println(count);
-            }
-            count++;
+            synchronized(count){
+                try {
+                    //System.out.println("Message 1 is waiting");
+                    count.wait();
+                } catch (InterruptedException e) {
+                    //System.out.println("the count is " + count.counter);
+                    e.printStackTrace();
+                }
+                if(count.counter%15 == 0){ //a facotr of 7
+                    System.out.println("\n Message 1 is printing the value "+count.counter);
+                    //System.out.println(count.counter);
+                }
+            }  
         }
-        
-    }
 
+    }
 }
