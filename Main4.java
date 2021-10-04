@@ -3,13 +3,16 @@ import java.lang.reflect.*;
 public class Main4 {
 
     public static void main(String[] args){
-        MyClass myClass = new MyClass();
-        Class<?> c = myClass.getClass(); //needs to be a command line argument but testing with hard case
-
-        Method[] methods = c.getDeclaredMethods();
-        for(int i =0;i<methods.length;i++){
-            String methodName = methods[i].getName();
-            if((methodName.startsWith("test")) && (methods[i].getReturnType().equals(Boolean.TYPE)) && (methods[i].getParameterCount() ==0)){
+    
+        try{
+            Class<?> c = Class.forName(args[0]);
+            MyClass myClass = new MyClass();
+            //Class<?> c = myClass.getClass(); //needs to be a command line argument but testing with hard case
+            System.out.println(args[0]);
+            Method[] methods = c.getDeclaredMethods();
+            for(int i =0;i<methods.length;i++){
+                String methodName = methods[i].getName();
+                if((methodName.startsWith("test")) && (methods[i].getReturnType().equals(Boolean.TYPE)) && (methods[i].getParameterCount() ==0)){
                 //System.out.println("Found the method "+ methodName);
                 try {
                     if(methods[i].invoke(myClass).toString() == "true"){
@@ -20,10 +23,24 @@ public class Main4 {
                     }
 
                 } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-                    e.printStackTrace();
+                    System.out.println("Error: Class Name not Found");
                 }
             }
         }
+
+        }
+        catch(ClassNotFoundException e ){
+            System.out.println("Error: Class Name not Found");
+        }
+        catch(ExceptionInInitializerError e){
+            System.out.println("Error: Class Name not Found");
+        }
+        catch(LinkageError e){
+            System.out.println("Error: Class Name not Found");
+        }
+       
+
+        
 
     }
 
