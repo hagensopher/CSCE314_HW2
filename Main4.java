@@ -4,13 +4,18 @@ public class Main4 {
 
     public static void main(String[] args){
         MyClass myClass = new MyClass();
-        Class c = myClass.getClass(); //needs to be a command line argument but testing with hard case
+        Class<?> c = myClass.getClass(); //needs to be a command line argument but testing with hard case
 
         Method[] methods = c.getDeclaredMethods();
         for(int i =0;i<methods.length;i++){
             String methodName = methods[i].getName();
             if((methodName.startsWith("test")) && (methods[i].getReturnType().equals(Boolean.TYPE)) && (methods[i].getParameterCount() ==0)){
                 System.out.println("Found the method "+ methodName);
+                try {
+                    System.out.println(methods[i].invoke(myClass)); //call the method
+                } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+                    e.printStackTrace();
+                }
             }
         }
 

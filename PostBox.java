@@ -3,6 +3,7 @@
 
 import java.util.*;
 
+
 class PostBox implements Runnable {
     private final int MAX_SIZE;
 
@@ -42,23 +43,43 @@ class PostBox implements Runnable {
 
     public void stop() {
         // make it so that this Runnable will stop when it next wakes
+        stop = true;
     }
 
     public void send(String recipient, String msg) {
-        // add a message to the shared message queue
+        // add a message to the shared message queue i.e message
+        
     }
 
     public List<String> retrieve() {
-        // return the contents of myMessages
-        return null;
-        // and empty myMessages
+        // 1. return the contents of myMessages
+        //loop through all the myMessages?
+        List<String> retrivedMessages = new ArrayList<String>();
+        for(int i =0;i<myMessages.size();i++){
+            System.out.println(myMessages.get(i));
+            //need to return the list of strings
+            retrivedMessages.add(myMessages.get(i).msg);
+            
+        }
+        // 2. and empty myMessages
+        myMessages.clear();
+
+
+        return retrivedMessages;
+        
     }
 
     public void run() {
         // loop while not stopped
-        //   1. approximately once every second move all messages
+        while(!stop){
+            //   1. approximately once every second move all messages
         //      addressed to this post box from the shared message
         //      queue to the private myMessages queue
+                for(int i=0;i<messages.size();i++){
+                    myMessages.add(messages.get(i)); //move this messages?
+                }
+        }
+        
         //   2. also approximately once every second, if the private or
         //      shared message queue has more than MAX_SIZE messages,
         //      delete oldest messages so that the size of myMessages
