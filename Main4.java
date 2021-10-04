@@ -10,9 +10,15 @@ public class Main4 {
         for(int i =0;i<methods.length;i++){
             String methodName = methods[i].getName();
             if((methodName.startsWith("test")) && (methods[i].getReturnType().equals(Boolean.TYPE)) && (methods[i].getParameterCount() ==0)){
-                System.out.println("Found the method "+ methodName);
+                //System.out.println("Found the method "+ methodName);
                 try {
-                    System.out.println(methods[i].invoke(myClass)); //call the method
+                    if(methods[i].invoke(myClass).toString() == "true"){
+                        System.out.println("OK: "+methods[i].getName()+" suceeded"); //call the method
+                    }
+                    else{
+                        System.out.println("FAILED: "+methods[i].getName()+" failed"); //call the method
+                    }
+
                 } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
                     e.printStackTrace();
                 }
