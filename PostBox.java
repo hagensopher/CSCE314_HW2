@@ -2,10 +2,14 @@
 // to this class.
 
 import java.util.*;
-
+import java.util.concurrent.*;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 class PostBox implements Runnable {
     private final int MAX_SIZE;
+    
+    ReentrantLock sharedMessages;
 
     class Message {
         String sender;
@@ -32,6 +36,7 @@ class PostBox implements Runnable {
     }
 
     public PostBox(String myId, int max_size, PostBox p) {
+        ReentrantLock privateMessages;
         this.myId = myId;
         this.messages = p.messages;
         this.MAX_SIZE = max_size;
@@ -57,10 +62,12 @@ class PostBox implements Runnable {
         //loop through all the myMessages?
         List<String> retrivedMessages = new ArrayList<String>();
         for(int i =0;i<myMessages.size();i++){
-            System.out.println(myMessages.get(i));
+            System.out.println(myMessages.get(i).msg);
             //need to return the list of strings
-            //lock and grab the ones that match myID
+            synchronized(myMessages){
             retrivedMessages.add(myMessages.get(i).msg);
+            }
+            //UNLOCK????
             
         }
         // 2. and empty myMessages
@@ -78,13 +85,36 @@ class PostBox implements Runnable {
         //      addressed to this post box from the shared message
         //      queue to the private myMessages queue
                 for(int i=0;i<messages.size();i++){
-                    myMessages.add(messages.get(i)); //move this messages?
+                    //lock and grab the ones that MATCH ID
+                    if(this.myId == messages.get(i).sender){
+                        synchronized(myMessages){
+                        myMessages.add(messages.get(i)); //move this messages?
+                        }
+                    }
+                    
                 }
+
+        //wait every one second (this is def in the wrong place)
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }     
+
         }
-        
+                
         //   2. also approximately once every second, if the private or
         //      shared message queue has more than MAX_SIZE messages,
         //      delete oldest messages so that the size of myMessages
         //      and messages is at most MAX_SIZE.
+        synchronized(myMessages){
+        while(myMessages.size() > MAX_SIZE){
+            //LOCK??
+            
+            myMessages.removeLast();
+            
+            //UNLOCK??
+        }
+    }
     }
 }
