@@ -25,7 +25,7 @@ public class Main1 {
                 for (int i=0; i<20; ++i) pOsato.send(bond, "flooding the message queue...");
                 }
                 }).start();
-
+        //System.out.println("Made it here");
         PostBox[] boxes = { pBond, pBlofeld, pOsato };
         long startTime = System.currentTimeMillis();
         // poll for messages in a loop for 5 secs

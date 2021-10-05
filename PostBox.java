@@ -61,18 +61,20 @@ class PostBox implements Runnable {
         // 1. return the contents of myMessages
         //loop through all the myMessages?
         List<String> retrivedMessages = new ArrayList<String>();
-        for(int i =0;i<myMessages.size();i++){
-            System.out.println(myMessages.get(i).msg);
-            //need to return the list of strings
-            synchronized(myMessages){
-            retrivedMessages.add(myMessages.get(i).msg);
+        synchronized(myMessages){ //this all needs to be locked because if it gives the lock
+                                    //before the clear then the data is wrong
+            for(int i =0;i<myMessages.size();i++){
+                //System.out.println(myMessages.get(i).msg);
+                //need to return the list of strings
+                
+                retrivedMessages.add(myMessages.get(i).msg);
+                
+                //UNLOCK????
+                
             }
-            //UNLOCK????
-            
+            // 2. and empty myMessages
+            myMessages.clear();
         }
-        // 2. and empty myMessages
-        myMessages.clear();
-
 
         return retrivedMessages;
         
@@ -85,17 +87,35 @@ class PostBox implements Runnable {
         //      addressed to this post box from the shared message
         //      queue to the private myMessages queue
                 for(int i=0;i<messages.size();i++){
+                    
                     //lock and grab the ones that MATCH ID
                     if(this.myId == messages.get(i).sender){
+                        //System.out.println("Test");
                         synchronized(myMessages){
                         myMessages.add(messages.get(i)); //move this messages?
+                        //System.out.println("myMessages Size is "+ myMessages.size());
                         }
                     }
                     
                 }
-
-        //wait every one second (this is def in the wrong place)
+                 //   2. also approximately once every second, if the private or
+            //      shared message queue has more than MAX_SIZE messages,
+            //      delete oldest messages so that the size of myMessages
+            //      and messages is at most MAX_SIZE.
+                synchronized(myMessages){ 
+                    while(myMessages.size() > MAX_SIZE){ //checks myMessages
+                        myMessages.removeLast();
+                        
+                    }
+                }
+                synchronized(messages){
+                    while(messages.size() > MAX_SIZE){ //checks messages
+                        messages.removeLast();
+                    }
+                }
+        //wait every one second 
             try {
+                //System.out.println(this.myId +" Sleep one second");
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -103,18 +123,7 @@ class PostBox implements Runnable {
 
         }
                 
-        //   2. also approximately once every second, if the private or
-        //      shared message queue has more than MAX_SIZE messages,
-        //      delete oldest messages so that the size of myMessages
-        //      and messages is at most MAX_SIZE.
-        synchronized(myMessages){
-        while(myMessages.size() > MAX_SIZE){
-            //LOCK??
-            
-            myMessages.removeLast();
-            
-            //UNLOCK??
-        }
-    }
+       
+        
     }
 }
