@@ -49,6 +49,7 @@ class PostBox implements Runnable {
     public void send(String recipient, String msg) {
         // add a message to the shared message queue i.e message
         
+        messages.add(new Message(this.myId, recipient, msg)); //this should add the message to shared?
     }
 
     public List<String> retrieve() {
@@ -58,6 +59,7 @@ class PostBox implements Runnable {
         for(int i =0;i<myMessages.size();i++){
             System.out.println(myMessages.get(i));
             //need to return the list of strings
+            //lock and grab the ones that match myID
             retrivedMessages.add(myMessages.get(i).msg);
             
         }
