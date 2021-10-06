@@ -55,48 +55,58 @@ class PostBox implements Runnable {
         // add a message to the shared message queue i.e message
         synchronized(messages){
         messages.add(new Message(this.myId, recipient, msg)); //this should add the message to shared?
+       // System.out.println("I added the new message "+messages.getLast());
         }
     }
 
     public List<String> retrieve() {
         // 1. return the contents of myMessages
         //loop through all the myMessages?
-        List<String> retrivedMessages = new ArrayList<String>();
+        
         synchronized(myMessages){ //this all needs to be locked because if it gives the lock
-                                    //before the clear then the data is wrong
+                                      //before the clear then the data is wrong
+            List<String> retrivedMessages = new ArrayList<String>();
             for(int i =0;i<myMessages.size();i++){
-                //System.out.println(myMessages.get(i).msg);
-                //need to return the list of strings
+                //System.out.println("the Mymessage size is "+myMessages.size()); 
                 
-                retrivedMessages.add(myMessages.get(i).msg);            
-                //UNLOCK???? 
+                retrivedMessages.add(myMessages.get(i).msg);
+                //System.out.println("the retrivedMessage size is "+retrivedMessages.size());  
+
             }
             // 2. and empty myMessages
+            
             myMessages.clear();
+            return retrivedMessages; //move this in the synchronize??
         }
 
-        return retrivedMessages;
+        
         
     }
 
     public void run() {
         // loop while not stopped
+
         while(!stop){
             //   1. approximately once every second move all messages
         //      addressed to this post box from the shared message
         //      queue to the private myMessages queue
+            synchronized(messages){
                 for(int i=0;i<messages.size();i++){
-                    
+                    //System.out.println("The messages are of messages are "+messages.get(i));
+                    synchronized(myMessages){
                     //lock and grab the ones that MATCH ID
                     if(this.myId == messages.get(i).sender){
                         //System.out.println("Test");
-                        synchronized(myMessages){
-                        myMessages.add(messages.get(i)); //move this messages?
+                        
+                        myMessages.add(messages.get(i)); //INDEX OUT OF BOUND ERROR HERE
+                        messages.remove(i);
+                        
                         //System.out.println("myMessages Size is "+ myMessages.size());
                         }
                     }
                     
                 }
+            }
                  //   2. also approximately once every second, if the private or
             //      shared message queue has more than MAX_SIZE messages,
             //      delete oldest messages so that the size of myMessages
