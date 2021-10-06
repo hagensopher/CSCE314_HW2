@@ -85,27 +85,41 @@ class PostBox implements Runnable {
 
     public void run() {
         // loop while not stopped
-
+        List<Message> tempMessage = new ArrayList<Message>();
         while(!stop){
             //   1. approximately once every second move all messages
         //      addressed to this post box from the shared message
         //      queue to the private myMessages queue
             synchronized(messages){
+                tempMessage.clear();
                 for(int i=0;i<messages.size();i++){
                     //System.out.println("The messages are of messages are "+messages.get(i));
-                    synchronized(myMessages){
-                    //lock and grab the ones that MATCH ID
+                    
                     if(this.myId == messages.get(i).sender){
                         //System.out.println("Test");
-                        
-                        myMessages.add(messages.get(i)); //INDEX OUT OF BOUND ERROR HERE
+                        synchronized(tempMessage){
+                        tempMessage.add(messages.get(i));
+                        }
                         messages.remove(i);
                         
+                        
                         //System.out.println("myMessages Size is "+ myMessages.size());
-                        }
                     }
+                    //messages.remove(i);
+                }
+            }
+            synchronized(myMessages){
+                synchronized(tempMessage){
+                for(int i=0;i<tempMessage.size();i++){
+                    //System.out.println("The messages are of messages are "+messages.get(i));
+                    myMessages.add(tempMessage.get(i)); 
+                    //lock and grab the ones that MATCH ID
+                    //tempMessage.remove(i);
                     
                 }
+            }
+                tempMessage.clear();
+
             }
                  //   2. also approximately once every second, if the private or
             //      shared message queue has more than MAX_SIZE messages,
@@ -125,6 +139,7 @@ class PostBox implements Runnable {
         //wait every one second 
             try {
                 //System.out.println(this.myId +" Sleep one second");
+                tempMessage.clear();
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
