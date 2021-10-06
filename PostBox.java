@@ -53,8 +53,9 @@ class PostBox implements Runnable {
 
     public void send(String recipient, String msg) {
         // add a message to the shared message queue i.e message
-        
+        synchronized(messages){
         messages.add(new Message(this.myId, recipient, msg)); //this should add the message to shared?
+        }
     }
 
     public List<String> retrieve() {
@@ -67,10 +68,8 @@ class PostBox implements Runnable {
                 //System.out.println(myMessages.get(i).msg);
                 //need to return the list of strings
                 
-                retrivedMessages.add(myMessages.get(i).msg);
-                
-                //UNLOCK????
-                
+                retrivedMessages.add(myMessages.get(i).msg);            
+                //UNLOCK???? 
             }
             // 2. and empty myMessages
             myMessages.clear();
@@ -122,8 +121,6 @@ class PostBox implements Runnable {
             }     
 
         }
-                
-       
-        
+                  
     }
 }
