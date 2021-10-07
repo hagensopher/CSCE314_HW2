@@ -6,24 +6,27 @@ public class Main4 {
     
         try{
             Class<?> c = Class.forName(args[0]);
-            MyClass myClass = new MyClass();
+            //System.out.println(c.getClass().);
+            //MyClass myClass = new MyClass();
             //Class<?> c = myClass.getClass(); //needs to be a command line argument but testing with hard case
             System.out.println(args[0]);
             Method[] methods = c.getDeclaredMethods();
-            for(int i =0;i<methods.length;i++){
-                String methodName = methods[i].getName();
-                if((methodName.startsWith("test")) && (methods[i].getReturnType().equals(Boolean.TYPE)) && (methods[i].getParameterCount() ==0)){
+            for(Method m : methods){
+                String methodName = m.getName();
+                if((methodName.startsWith("test")) && (m.getReturnType().equals(Boolean.TYPE)) && (m.getParameterCount() ==0) && Modifier.isStatic(m.getModifiers())){
                 //System.out.println("Found the method "+ methodName);
                 try {
-                    if(methods[i].invoke(myClass).toString() == "true"){
-                        System.out.println("OK: "+methods[i].getName()+" suceeded"); //call the method
+                    System.out.println(m.getClass());
+                    if(m.invoke(null).toString() == "true"){
+                        System.out.println("OK: "+m.getName()+" suceeded"); //call the method
                     }
                     else{
-                        System.out.println("FAILED: "+methods[i].getName()+" failed"); //call the method
+                        System.out.println("FAILED: "+m.getName()+" failed"); //call the method
                     }
 
                 } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-                    System.out.println("Error: Class Name not Found");
+                    System.out.println("Error: Method Name not Found");
+                    System.out.println(e);
                 }
             }
         }
@@ -49,9 +52,10 @@ public class Main4 {
 
 }
 class MyClass{ //example temp class
-    public boolean test1(){ return true;} //correct
-    public boolean test2(){ return false;} //correct
-    public boolean testTAMU(boolean tamu){return tamu;}
-    public int testInt(){return 314;}
-    public boolean badtest(){return true;}
+    public static boolean test1(){ return true;} //correct
+    public static  boolean test2(){ return false;} //correct
+    public static boolean testTAMU(boolean tamu){return tamu;}
+    public boolean testCSE(){return false;}
+    public static int testInt(){return 314;}
+    public static boolean badtest(){return true;}
 }
